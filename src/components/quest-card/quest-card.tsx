@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
+import { generatePath, Link } from 'react-router-dom';
 import { QuestPreview } from '../../types/api';
+import { AppRoute } from '../../types/app-route';
 
 type QuestCardProps = {
   quest: QuestPreview;
@@ -16,7 +17,7 @@ export default function QuestCard({ quest }: QuestCardProps) {
 
   return (
     <article>
-      <Link to={`/quest/${quest.id}`}>
+      <Link to={generatePath(AppRoute.Quest, { questId: quest.id })}>
         <picture>
           <source srcSet={quest.previewImgWebp} type="image/webp" />
           <img
