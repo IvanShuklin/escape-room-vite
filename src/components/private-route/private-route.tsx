@@ -2,19 +2,24 @@ import { ReactElement } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { AppRoute } from '../../types/app-route';
+import { AuthorizationStatus } from '../../types/auth';
 
 type PrivateRouteProps = {
-  isAuthorized: boolean;
+  authorizationStatus: AuthorizationStatus;
   children: ReactElement;
 };
 
 export default function PrivateRoute({
-  isAuthorized,
+  authorizationStatus,
   children,
 }: PrivateRouteProps): ReactElement {
   const location = useLocation();
 
-  return isAuthorized ? (
+  if (authorizationStatus === AuthorizationStatus.Unknown) {
+    return <p>Проверяем авторизацию...</p>;
+  }
+
+  return authorizationStatus === AuthorizationStatus.Auth ? (
     children
   ) : (
     <Navigate to={AppRoute.Login} state={{ from: location }} replace />
