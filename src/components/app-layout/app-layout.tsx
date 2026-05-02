@@ -4,9 +4,10 @@ import { AppRoute } from '../../types/app-route';
 
 type AppLayoutProps = {
   isAuthorized: boolean;
+  onLogout: () => void;
 };
 
-export default function AppLayout({ isAuthorized }: AppLayoutProps) {
+export default function AppLayout({ isAuthorized, onLogout }: AppLayoutProps) {
   return (
     <>
       <header className="header">
@@ -41,7 +42,11 @@ export default function AppLayout({ isAuthorized }: AppLayoutProps) {
           </nav>
 
           {isAuthorized ? (
-            <button className="btn header__side-nav" type="button">
+            <button
+              className="btn header__side-nav"
+              type="button"
+              onClick={onLogout}
+            >
               Выйти
             </button>
           ) : (
