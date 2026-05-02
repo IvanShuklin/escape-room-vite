@@ -1,0 +1,23 @@
+.map-marker {
+  width: 32px;
+  height: 40px;
+  border-radius: 50% 50% 50% 0;
+  background-color: #f2890f;
+  transform: rotate(-45deg);
+  cursor: pointer;
+}
+
+.map-marker--active {
+  background-color: #ffffff;
+}
+
+.map-marker::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #1b1b1b;
+}
