@@ -9,8 +9,8 @@ export const store = configureStore({
   reducer: {
     quests: questsReducer,
     quest: questReducer,
-    user: userReducer,
     booking: bookingReducer,
+    user: userReducer,
   },
 });
 
