@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
 
+import Footer from '../footer/footer';
 import { AppRoute } from '../../types/app-route';
 
 type AppLayoutProps = {
@@ -41,23 +42,37 @@ export default function AppLayout({ isAuthorized, onLogout }: AppLayoutProps) {
             </ul>
           </nav>
 
-          {isAuthorized ? (
-            <button
-              className="btn header__side-nav"
-              type="button"
-              onClick={onLogout}
+          <div className="header__side-nav">
+            {isAuthorized ? (
+              <Link
+                className="btn btn--accent header__side-item"
+                to={'#'}
+                onClick={onLogout}
+              >
+                Выйти
+              </Link>
+            ) : (
+              <Link
+                className="btn btn--accent header__side-item"
+                to={AppRoute.Login}
+              >
+                Войти
+              </Link>
+            )}
+
+            <a
+              className="link header__side-item header__phone-link"
+              href="tel:88001111111"
             >
-              Выйти
-            </button>
-          ) : (
-            <Link className="btn header__side-nav" to={AppRoute.Login}>
-              Войти
-            </Link>
-          )}
+              8 (000) 111-11-11
+            </a>
+          </div>
         </div>
       </header>
 
       <Outlet />
+
+      <Footer />
     </>
   );
 }

@@ -24,18 +24,20 @@ export default function QuestFilter({
   onTypeChange,
 }: QuestFilterProps) {
   return (
-    <ul>
-      {QuestFilterItems.map((item) => (
-        <li key={item.type}>
-          <button
-            type="button"
-            onClick={() => onTypeChange(item.type)}
-            aria-pressed={activeType === item.type}
-          >
-            {item.title}
-          </button>
-        </li>
-      ))}
-    </ul>
+    <div className="page-content__item">
+      <ul className="filter__list">
+        {QuestFilterItems.map((item) => (
+          <li className="filter__item" key={item.type}>
+            <button
+              type="button"
+              onClick={() => onTypeChange(item.type)}
+              aria-pressed={activeType === item.type}
+            >
+              {item.title}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

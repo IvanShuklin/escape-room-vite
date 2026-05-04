@@ -33,18 +33,29 @@ export default function MainPage() {
         <title>Escape Room — квесты в Санкт-Петербурге</title>
       </Helmet>
 
-      <main>
-        <h1>Выберите тематику</h1>
+      <main className="page-content">
+        <div className="container">
+          <h1 className="subtitle page-content__subtitle">
+            квесты в Санкт-Петербурге
+          </h1>
+          <h2 className="title title--size-m page-content__title">
+            Выберите тематику
+          </h2>
 
-        <QuestFilter activeType={activeType} onTypeChange={handleTypeChange} />
+          <QuestFilter
+            activeType={activeType}
+            onTypeChange={handleTypeChange}
+          />
+          <h2 className="title visually-hidden">Выберите квест</h2>
 
-        {loadingStatus === 'loading' && <p>Загружаем квесты...</p>}
+          {loadingStatus === 'loading' && <p>Загружаем квесты...</p>}
 
-        {loadingStatus === 'error' && (
-          <p>Не удалось загрузить квесты. Попробуйте обновить страницу.</p>
-        )}
+          {loadingStatus === 'error' && (
+            <p>Не удалось загрузить квесты. Попробуйте обновить страницу.</p>
+          )}
 
-        {loadingStatus === 'success' && <QuestList quests={quests} />}
+          {loadingStatus === 'success' && <QuestList quests={quests} />}
+        </div>
       </main>
     </>
   );
