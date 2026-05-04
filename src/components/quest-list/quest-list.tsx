@@ -11,12 +11,12 @@ export default function QuestList({ quests }: QuestListProps) {
   }
 
   return (
-    <ul>
+    <div className="page-content__item">
       {quests.map((quest) => (
         <li key={quest.id}>
           <QuestCard quest={quest} />
         </li>
       ))}
-    </ul>
+    </div>
   );
 }
