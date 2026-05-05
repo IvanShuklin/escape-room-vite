@@ -44,13 +44,19 @@ export default function QuestPage() {
         </title>
       </Helmet>
 
-      <main>
-        {loadingStatus === 'loading' && <p>Загружаем квест...</p>}
+      <main className="decorated-page quest-page">
+        {loadingStatus === 'loading' && (
+          <div className="container container--size-l">
+            <p>Загружаем квест...</p>
+          </div>
+        )}
 
         {loadingStatus === 'error' && errorType === 'common' && (
-          <div>
+          <div className="container container--size-l">
             <p>Не удалось загрузить информацию о квесте.</p>
-            <Link to={AppRoute.Root}>Вернуться на главную</Link>
+            <Link className="link" to={AppRoute.Root}>
+              Вернуться на главную
+            </Link>
           </div>
         )}
 

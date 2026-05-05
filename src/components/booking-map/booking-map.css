@@ -1,28 +1,45 @@
 .booking-map {
   width: 100%;
+}
+
+.booking-map .map {
+  width: 100%;
   height: 336px;
+}
+
+.booking-map .map__container {
+  width: 100%;
+  height: 100%;
 }
 
 .map-marker {
   width: 32px;
   height: 40px;
-  border-radius: 50% 50% 50% 0;
-  background-color: #1b1b1b;
-  transform: rotate(-45deg);
-  cursor: pointer;
+  background-image: url('/img/svg/pin-default.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .map-marker--active {
-  background-color: #f2890f;
+  background-image: url('/img/svg/pin-active.svg');
 }
 
-.map-marker::after {
-  content: '';
-  position: absolute;
-  top: 9px;
-  left: 9px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+.booking-map .leaflet-control-zoom {
+  border: none;
+  box-shadow: none;
+}
+
+.booking-map .leaflet-control-zoom a {
+  width: 40px;
+  height: 40px;
+  border: none;
   background-color: #ffffff;
+  color: #1f1d1d;
+  line-height: 40px;
+  font-size: 24px;
+}
+
+.booking-map .leaflet-control-zoom a:first-child {
+  margin-bottom: 8px;
 }

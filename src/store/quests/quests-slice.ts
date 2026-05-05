@@ -1,18 +1,19 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchQuests } from '../../services/api';
-import { QuestPreview, QuestType } from '../../types/api';
 
-type LoadingStatus = 'idle' | 'loading' | 'success' | 'error';
+import { fetchQuests } from '../../services/api';
+import { QuestLevel, QuestPreview, QuestType } from '../../types/api';
 
 type QuestsState = {
   quests: QuestPreview[];
   activeType: QuestType | 'all';
-  loadingStatus: LoadingStatus;
+  activeLevel: QuestLevel | 'any';
+  loadingStatus: 'idle' | 'loading' | 'success' | 'error';
 };
 
 const initialState: QuestsState = {
   quests: [],
   activeType: 'all',
+  activeLevel: 'any',
   loadingStatus: 'idle',
 };
 
@@ -27,6 +28,9 @@ const questsSlice = createSlice({
   reducers: {
     changeQuestType: (state, action: PayloadAction<QuestType | 'all'>) => {
       state.activeType = action.payload;
+    },
+    changeQuestLevel: (state, action: PayloadAction<QuestLevel | 'any'>) => {
+      state.activeLevel = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -44,5 +48,5 @@ const questsSlice = createSlice({
   },
 });
 
-export const { changeQuestType } = questsSlice.actions;
+export const { changeQuestType, changeQuestLevel } = questsSlice.actions;
 export const questsReducer = questsSlice.reducer;

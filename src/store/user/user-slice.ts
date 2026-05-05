@@ -65,11 +65,10 @@ export const logoutAction = createAsyncThunk<
 >('user/logout', async (_, { rejectWithValue }) => {
   try {
     await logoutRequest();
-    dropToken();
   } catch {
-    dropToken();
-
     return rejectWithValue('Не удалось завершить сеанс');
+  } finally {
+    dropToken();
   }
 });
 

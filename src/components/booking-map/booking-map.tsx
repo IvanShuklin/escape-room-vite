@@ -24,7 +24,7 @@ type BookingMapProps = {
   onPlaceChange: (placeId: string) => void;
 };
 
-const DEFAULT_ZOOM = 13;
+const DEFAULT_ZOOM = 12;
 const MARKER_SIZE: [number, number] = [32, 40];
 const MARKER_ANCHOR: [number, number] = [16, 40];
 const MAP_PADDING: [number, number] = [40, 40];
@@ -51,6 +51,9 @@ export default function BookingMap({
   const mapRef = useRef<LeafletMap | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const markersRef = useRef<LeafletMarker[]>([]);
+
+  const selectedPlace =
+    places.find((place) => place.id === selectedPlaceId) ?? null;
 
   useEffect(() => {
     if (!mapContainerRef.current || places.length === 0 || mapRef.current) {
@@ -97,11 +100,8 @@ export default function BookingMap({
     });
 
     markersRef.current = places.map((place) => {
-      const placeCoordinates = getLatLng(place.location.coords);
-      const isActive = place.id === selectedPlaceId;
-
-      const currentMarker = marker(placeCoordinates, {
-        icon: createMarkerIcon(isActive),
+      const currentMarker = marker(getLatLng(place.location.coords), {
+        icon: createMarkerIcon(place.id === selectedPlaceId),
       });
 
       currentMarker.on('click', () => {
@@ -113,17 +113,13 @@ export default function BookingMap({
       return currentMarker;
     });
 
-    const selectedPlace = places.find((place) => place.id === selectedPlaceId);
-
     if (selectedPlace) {
       map.setView(getLatLng(selectedPlace.location.coords), DEFAULT_ZOOM);
-
       return;
     }
 
     if (places.length === 1) {
       map.setView(getLatLng(places[0].location.coords), DEFAULT_ZOOM);
-
       return;
     }
 
@@ -131,7 +127,19 @@ export default function BookingMap({
       latLngBounds(places.map((place) => getLatLng(place.location.coords))),
       { padding: MAP_PADDING },
     );
-  }, [places, selectedPlaceId, onPlaceChange]);
+  }, [places, selectedPlace, selectedPlaceId, onPlaceChange]);
 
-  return <div className="booking-map" ref={mapContainerRef} />;
+  return (
+    <div className="booking-map">
+      <div className="map">
+        <div className="map__container" ref={mapContainerRef} />
+      </div>
+
+      {selectedPlace && (
+        <p className="booking-map__address">
+          Вы&nbsp;выбрали: {selectedPlace.location.address}
+        </p>
+      )}
+    </div>
+  );
 }
