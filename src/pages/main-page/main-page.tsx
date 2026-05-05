@@ -4,19 +4,25 @@ import { Helmet } from 'react-helmet-async';
 import QuestFilter from '../../components/quest-filter/quest-filter';
 import QuestList from '../../components/quest-list/quest-list';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { changeQuestType, loadQuests } from '../../store/quests/quests-slice';
 import {
+  changeQuestLevel,
+  changeQuestType,
+  loadQuests,
+} from '../../store/quests/quests-slice';
+import {
+  getActiveQuestLevel,
   getActiveQuestType,
   getFilteredQuests,
   getQuestsLoadingStatus,
 } from '../../store/quests/selectors';
-import { QuestType } from '../../types/api';
+import { QuestLevel, QuestType } from '../../types/api';
 
 export default function MainPage() {
   const dispatch = useAppDispatch();
 
   const quests = useAppSelector(getFilteredQuests);
   const activeType = useAppSelector(getActiveQuestType);
+  const activeLevel = useAppSelector(getActiveQuestLevel);
   const loadingStatus = useAppSelector(getQuestsLoadingStatus);
 
   useEffect(() => {
@@ -27,6 +33,10 @@ export default function MainPage() {
     dispatch(changeQuestType(type));
   };
 
+  const handleLevelChange = (level: QuestLevel | 'any') => {
+    dispatch(changeQuestLevel(level));
+  };
+
   return (
     <>
       <Helmet>
@@ -35,17 +45,24 @@ export default function MainPage() {
 
       <main className="page-content">
         <div className="container">
-          <h1 className="subtitle page-content__subtitle">
-            квесты в Санкт-Петербурге
-          </h1>
-          <h2 className="title title--size-m page-content__title">
-            Выберите тематику
-          </h2>
+          <div className="page-content__title-wrapper">
+            <h1 className="subtitle page-content__subtitle">
+              квесты в Санкт-Петербурге
+            </h1>
+            <h2 className="title title--size-m page-content__title">
+              Выберите тематику
+            </h2>
+          </div>
 
-          <QuestFilter
-            activeType={activeType}
-            onTypeChange={handleTypeChange}
-          />
+          <div className="page-content__item">
+            <QuestFilter
+              activeType={activeType}
+              activeLevel={activeLevel}
+              onTypeChange={handleTypeChange}
+              onLevelChange={handleLevelChange}
+            />
+          </div>
+
           <h2 className="title visually-hidden">Выберите квест</h2>
 
           {loadingStatus === 'loading' && <p>Загружаем квесты...</p>}

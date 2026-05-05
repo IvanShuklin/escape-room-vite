@@ -11,11 +11,9 @@ export default function QuestList({ quests }: QuestListProps) {
   }
 
   return (
-    <div className="page-content__item">
+    <div className="cards-grid">
       {quests.map((quest) => (
-        <li key={quest.id}>
-          <QuestCard quest={quest} />
-        </li>
+        <QuestCard key={quest.id} quest={quest} />
       ))}
     </div>
   );

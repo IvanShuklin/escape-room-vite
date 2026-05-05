@@ -1,23 +1,30 @@
 import { generatePath, Link } from 'react-router-dom';
-import { QuestPreview } from '../../types/api';
+
 import { AppRoute } from '../../types/app-route';
+import { QuestPreview } from '../../types/api';
 
 type QuestCardProps = {
   quest: QuestPreview;
 };
 
 const QuestLevelTitle = {
-  easy: 'легкий',
-  medium: 'средний',
-  hard: 'сложный',
+  easy: 'Лёгкий',
+  medium: 'Средний',
+  hard: 'Сложный',
 } as const;
 
 export default function QuestCard({ quest }: QuestCardProps) {
   const [peopleMin, peopleMax] = quest.peopleMinMax;
 
+  const questLink = generatePath(AppRoute.Quest, { questId: quest.id });
+  const peopleCount =
+    peopleMin === peopleMax
+      ? `${peopleMin}\u00A0чел`
+      : `${peopleMin}–${peopleMax}\u00A0чел`;
+
   return (
-    <article>
-      <Link to={generatePath(AppRoute.Quest, { questId: quest.id })}>
+    <div className="quest-card">
+      <div className="quest-card__img">
         <picture>
           <source srcSet={quest.previewImgWebp} type="image/webp" />
           <img
@@ -27,17 +34,30 @@ export default function QuestCard({ quest }: QuestCardProps) {
             alt={`Квест ${quest.title}`}
           />
         </picture>
+      </div>
 
-        <h3>{quest.title}</h3>
+      <div className="quest-card__content">
+        <div className="quest-card__info-wrapper">
+          <Link className="quest-card__link" to={questLink}>
+            {quest.title}
+          </Link>
+        </div>
 
-        <p>
-          {peopleMin === peopleMax
-            ? `${peopleMin} чел.`
-            : `${peopleMin}–${peopleMax} чел.`}
-        </p>
-
-        <p>{QuestLevelTitle[quest.level]}</p>
-      </Link>
-    </article>
+        <ul className="tags quest-card__tags">
+          <li className="tags__item">
+            <svg width="11" height="14" aria-hidden="true">
+              <use xlinkHref="#icon-person"></use>
+            </svg>
+            {peopleCount}
+          </li>
+          <li className="tags__item">
+            <svg width="14" height="14" aria-hidden="true">
+              <use xlinkHref="#icon-level"></use>
+            </svg>
+            {QuestLevelTitle[quest.level]}
+          </li>
+        </ul>
+      </div>
+    </div>
   );
 }

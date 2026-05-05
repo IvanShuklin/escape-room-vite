@@ -3,7 +3,11 @@ import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
+import BookingFormFields, {
+  BookingFormData,
+} from '../../components/booking-form-fields/booking-form-fields';
 import BookingMap from '../../components/booking-map/booking-map';
+import BookingSlots from '../../components/booking-slots/booking-slots';
 import NotFoundPage from '../not-found-page/not-found-page';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
@@ -26,30 +30,7 @@ import {
 } from '../../store/quest/selectors';
 import { AppRoute } from '../../types/app-route';
 import { BookingDate, BookingRequest } from '../../types/api';
-
-type BookingFormData = {
-  contactPerson: string;
-  phone: string;
-  peopleCount: number;
-  withChildren: boolean;
-};
-
-const BookingDateTitle: Record<BookingDate, string> = {
-  today: 'Сегодня',
-  tomorrow: 'Завтра',
-};
-
-const phonePattern = /^(?:\+7|8)\s?\(?\d{3}\)?\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}$/;
-
-const normalizePhone = (phone: string): string => {
-  const digits = phone.replace(/\D/g, '');
-
-  if (digits.length === 11 && digits.startsWith('7')) {
-    return `8${digits.slice(1)}`;
-  }
-
-  return digits;
-};
+import { normalizePhone } from '../../utils/booking';
 
 export default function BookingPage() {
   const { questId } = useParams();
@@ -78,23 +59,16 @@ export default function BookingPage() {
     defaultValues: {
       contactPerson: '',
       phone: '',
-      peopleCount: 2,
+      peopleCount: 1,
       withChildren: false,
+      userAgreement: false,
     },
   });
-
-  useEffect(() => {
-    if (quest) {
-      setValue('peopleCount', quest.peopleMinMax[0]);
-    }
-  }, [quest, setValue]);
 
   const selectedPlace = useMemo(
     () => places.find((place) => place.id === selectedPlaceId) ?? null,
     [places, selectedPlaceId],
   );
-
-  const selectedSlots = selectedPlace?.slots[selectedDate] ?? [];
 
   const isLoading =
     questLoadingStatus === 'loading' || placesLoadingStatus === 'loading';
@@ -116,6 +90,12 @@ export default function BookingPage() {
   }, [dispatch, questId]);
 
   useEffect(() => {
+    if (quest) {
+      setValue('peopleCount', quest.peopleMinMax[0]);
+    }
+  }, [quest, setValue]);
+
+  useEffect(() => {
     if (places.length > 0 && !selectedPlaceId) {
       setSelectedPlaceId(places[0].id);
     }
@@ -124,7 +104,7 @@ export default function BookingPage() {
   useEffect(() => {
     setSelectedTime(null);
     setSlotError(null);
-  }, [selectedPlaceId, selectedDate]);
+  }, [selectedPlaceId]);
 
   useEffect(() => {
     dispatch(resetBookingStatus());
@@ -147,7 +127,6 @@ export default function BookingPage() {
   const handleBookingSubmit = handleSubmit((formData) => {
     if (!selectedPlaceId || !selectedTime) {
       setSlotError('Выберите место, дату и время бронирования');
-
       return;
     }
 
@@ -181,8 +160,8 @@ export default function BookingPage() {
         <div className="decorated-page__decor" aria-hidden="true">
           {quest && (
             <picture>
-              <source srcSet={quest.coverImgWebp} type="image/webp" />
-              <img src={quest.coverImg} alt="" />
+              <source type="image/webp" srcSet={quest.coverImgWebp} />
+              <img src={quest.coverImg} width="1366" height="1959" alt="" />
             </picture>
           )}
         </div>
@@ -192,10 +171,14 @@ export default function BookingPage() {
 
           {!isLoading && quest && places.length > 0 && (
             <>
-              <p className="subtitle">Бронирование квеста</p>
-              <h1 className="title title--size-m title--uppercase">
-                {quest.title}
-              </h1>
+              <div className="page-content__title-wrapper">
+                <h1 className="subtitle subtitle--size-l page-content__subtitle">
+                  Бронирование квеста
+                </h1>
+                <p className="title title--size-m title--uppercase page-content__title">
+                  {quest.title}
+                </p>
+              </div>
 
               <div className="page-content__item">
                 <BookingMap
@@ -204,178 +187,29 @@ export default function BookingPage() {
                   onPlaceChange={setSelectedPlaceId}
                 />
               </div>
-              {places.map((place) => (
-                <label
-                  className="custom-radio booking-form__radio booking-form__radio--location"
-                  key={place.id}
-                >
-                  <input
-                    type="radio"
-                    name="location"
-                    value={place.id}
-                    checked={place.id === selectedPlaceId}
-                    onChange={() => setSelectedPlaceId(place.id)}
-                  />
-                  <span className="custom-radio__label">
-                    {place.location.address}
-                  </span>
-                </label>
-              ))}
 
               <form
                 className="booking-form"
+                action="#"
+                method="post"
                 onSubmit={(evt) => {
                   void handleBookingSubmit(evt);
                 }}
-                action="https://echo.htmlacademy.ru/"
-                method="post"
               >
-                <fieldset className="booking-form__section">
-                  <legend className="visually-hidden">
-                    Выбор даты и времени
-                  </legend>
+                <BookingSlots
+                  selectedPlace={selectedPlace}
+                  selectedDate={selectedDate}
+                  selectedTime={selectedTime}
+                  slotError={slotError}
+                  onSlotChange={handleSlotChange}
+                />
 
-                  {selectedPlace && (
-                    <fieldset className="booking-form__section">
-                      <legend className="booking-form__title">Сегодня</legend>
-
-                      {(['today', 'tomorrow'] as BookingDate[]).map((date) => (
-                        <div className="booking-form__date-section" key={date}>
-                          <p className="booking-form__date">
-                            {BookingDateTitle[date]}
-                          </p>
-
-                          <div className="booking-form__slots">
-                            {selectedPlace.slots[date].map((slot) => (
-                              <label
-                                className={`custom-radio booking-form__slot${
-                                  !slot.isAvailable
-                                    ? ' booking-form__slot--disabled'
-                                    : ''
-                                }`}
-                                key={`${date}-${slot.time}`}
-                              >
-                                <input
-                                  type="radio"
-                                  name="time"
-                                  value={`${date}-${slot.time}`}
-                                  checked={
-                                    selectedDate === date &&
-                                    selectedTime === slot.time
-                                  }
-                                  disabled={!slot.isAvailable}
-                                  onChange={() => {
-                                    handleSlotChange(date, slot.time);
-                                  }}
-                                />
-                                <span className="custom-radio__label">
-                                  {slot.time}
-                                </span>
-                              </label>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-
-                      {selectedSlots.length === 0 && (
-                        <p>Нет доступных слотов для выбранной даты.</p>
-                      )}
-
-                      {slotError && <p>{slotError}</p>}
-                    </fieldset>
-                  )}
-                </fieldset>
-
-                <fieldset className="booking-form__section">
-                  <legend className="visually-hidden">
-                    Контактная информация
-                  </legend>
-
-                  <div className="custom-input booking-form__input">
-                    <label className="custom-input__label">Ваше имя</label>
-                    <input
-                      type="text"
-                      placeholder="Имя"
-                      id="name"
-                      {...register('contactPerson', {
-                        required: 'Укажите имя',
-                        minLength: {
-                          value: 1,
-                          message: 'Имя должно содержать от 1 до 15 символов',
-                        },
-                        maxLength: {
-                          value: 15,
-                          message: 'Имя должно содержать от 1 до 15 символов',
-                        },
-                      })}
-                    />
-
-                    {errors.contactPerson && (
-                      <p>{errors.contactPerson.message}</p>
-                    )}
-                  </div>
-
-                  <div className="custom-input booking-form__input">
-                    <label className="custom-input__label">
-                      Контактный телефон
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="+7 (000) 000-00-00"
-                      {...register('phone', {
-                        required: 'Укажите телефон',
-                        pattern: {
-                          value: phonePattern,
-                          message:
-                            'Введите телефон в формате +7 (000) 000-00-00 или 89990000000',
-                        },
-                      })}
-                    />
-
-                    {errors.phone && <p>{errors.phone.message}</p>}
-                  </div>
-
-                  <div className="custom-input booking-form__input">
-                    <label className="custom-input__label">
-                      Количество участников
-                    </label>
-                    <input
-                      type="number"
-                      min={quest.peopleMinMax[0]}
-                      max={quest.peopleMinMax[1]}
-                      {...register('peopleCount', {
-                        required: 'Укажите количество участников',
-                        valueAsNumber: true,
-                        min: {
-                          value: quest.peopleMinMax[0],
-                          message: `Минимум участников: ${quest.peopleMinMax[0]}`,
-                        },
-                        max: {
-                          value: quest.peopleMinMax[1],
-                          message: `Максимум участников: ${quest.peopleMinMax[1]}`,
-                        },
-                      })}
-                    />
-
-                    {errors.peopleCount && <p>{errors.peopleCount.message}</p>}
-                  </div>
-
-                  <label className="custom-checkbox booking-form__checkbox booking-form__checkbox--children">
-                    <input
-                      type="checkbox"
-                      id="children"
-                      {...register('withChildren')}
-                    />
-                    <span className="custom-checkbox__icon">
-                      <svg width="20" height="17" aria-hidden="true">
-                        <use xlinkHref="#icon-tick"></use>
-                      </svg>
-                    </span>
-                    <span className="custom-checkbox__label">
-                      Со&nbsp;мной будут дети
-                    </span>
-                  </label>
-                </fieldset>
+                <BookingFormFields
+                  register={register}
+                  errors={errors}
+                  peopleMin={quest.peopleMinMax[0]}
+                  peopleMax={quest.peopleMinMax[1]}
+                />
 
                 {errorMessage && <p>{errorMessage}</p>}
 
@@ -388,6 +222,34 @@ export default function BookingPage() {
                     ? 'Бронируем...'
                     : 'Забронировать'}
                 </button>
+
+                <label className="custom-checkbox booking-form__checkbox booking-form__checkbox--agreement">
+                  <input
+                    type="checkbox"
+                    id="id-order-agreement"
+                    required
+                    {...register('userAgreement', {
+                      required: 'Подтвердите согласие с правилами',
+                    })}
+                  />
+                  <span className="custom-checkbox__icon">
+                    <svg width="20" height="17" aria-hidden="true">
+                      <use xlinkHref="#icon-tick" />
+                    </svg>
+                  </span>
+                  <span className="custom-checkbox__label">
+                    Я&nbsp;согласен с{' '}
+                    <a
+                      className="link link--active-silver link--underlined"
+                      href="#"
+                    >
+                      правилами обработки персональных данных
+                    </a>
+                    &nbsp;и пользовательским соглашением
+                  </span>
+                </label>
+
+                {errors.userAgreement && <p>{errors.userAgreement.message}</p>}
               </form>
             </>
           )}
