@@ -8,8 +8,7 @@ import {
 import { dropToken, getToken, saveToken } from '../../services/token';
 import { AuthData, UserData } from '../../types/api';
 import { AuthorizationStatus } from '../../types/auth';
-
-type LoadingStatus = 'idle' | 'loading' | 'success' | 'error';
+import { LoadingStatus } from '../../types/state';
 
 type UserState = {
   authorizationStatus: AuthorizationStatus;

@@ -3,8 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { fetchQuest } from '../../services/api';
 import { Quest } from '../../types/api';
-
-type LoadingStatus = 'idle' | 'loading' | 'success' | 'error';
+import { LoadingStatus } from '../../types/state';
 
 type QuestErrorType = 'not-found' | 'common' | null;
 

@@ -8,8 +8,7 @@ import {
   fetchReservations,
 } from '../../services/api';
 import { BookingPlace, BookingRequest, Reservation } from '../../types/api';
-
-type LoadingStatus = 'idle' | 'loading' | 'success' | 'error';
+import { LoadingStatus } from '../../types/state';
 
 type BookingState = {
   places: BookingPlace[];
