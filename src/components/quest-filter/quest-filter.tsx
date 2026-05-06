@@ -14,7 +14,7 @@ type QuestFilterLevelItem = {
   title: string;
 };
 
-const QuestFilterTypeItems: QuestFilterTypeItem[] = [
+const questFilterTypeItems: QuestFilterTypeItem[] = [
   {
     type: 'all',
     id: 'all',
@@ -59,7 +59,7 @@ const QuestFilterTypeItems: QuestFilterTypeItem[] = [
   },
 ];
 
-const QuestFilterLevelItems: QuestFilterLevelItem[] = [
+const questFilterLevelItems: QuestFilterLevelItem[] = [
   { level: 'any', id: 'any', title: 'Любой' },
   { level: 'easy', id: 'easy', title: 'Лёгкий' },
   { level: 'medium', id: 'middle', title: 'Средний' },
@@ -84,7 +84,7 @@ export default function QuestFilter({
       <fieldset className="filter__section">
         <legend className="visually-hidden">Тематика</legend>
         <ul className="filter__list">
-          {QuestFilterTypeItems.map((item) => (
+          {questFilterTypeItems.map((item) => (
             <li className="filter__item" key={item.type}>
               <input
                 type="radio"
@@ -112,7 +112,7 @@ export default function QuestFilter({
       <fieldset className="filter__section">
         <legend className="visually-hidden">Сложность</legend>
         <ul className="filter__list">
-          {QuestFilterLevelItems.map((item) => (
+          {questFilterLevelItems.map((item) => (
             <li className="filter__item" key={item.level}>
               <input
                 type="radio"

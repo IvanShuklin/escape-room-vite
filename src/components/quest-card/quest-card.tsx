@@ -2,16 +2,11 @@ import { generatePath, Link } from 'react-router-dom';
 
 import { AppRoute } from '../../types/app-route';
 import { QuestPreview } from '../../types/api';
+import { QuestLevelTitle } from '../../const';
 
 type QuestCardProps = {
   quest: QuestPreview;
 };
-
-const QuestLevelTitle = {
-  easy: 'Лёгкий',
-  medium: 'Средний',
-  hard: 'Сложный',
-} as const;
 
 export default function QuestCard({ quest }: QuestCardProps) {
   const [peopleMin, peopleMax] = quest.peopleMinMax;

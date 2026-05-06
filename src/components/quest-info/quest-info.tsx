@@ -1,24 +1,11 @@
 import { generatePath, Link } from 'react-router-dom';
 
 import { AppRoute } from '../../types/app-route';
-import { Quest, QuestLevel, QuestType } from '../../types/api';
+import { Quest } from '../../types/api';
+import { QuestLevelTitle, QuestTypeTitle } from '../../const';
 
 type QuestInfoProps = {
   quest: Quest;
-};
-
-const QuestLevelTitle: Record<QuestLevel, string> = {
-  easy: 'Лёгкий',
-  medium: 'Средний',
-  hard: 'Сложный',
-};
-
-const QuestTypeTitle: Record<QuestType, string> = {
-  adventures: 'Приключения',
-  horror: 'Ужасы',
-  mystic: 'Мистика',
-  detective: 'Детектив',
-  'sci-fi': 'Sci-fi',
 };
 
 export default function QuestInfo({ quest }: QuestInfoProps) {

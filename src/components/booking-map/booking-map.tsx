@@ -16,7 +16,7 @@ import type {
 } from 'leaflet';
 import { useEffect, useRef } from 'react';
 
-import { BookingPlace } from '../../types/api';
+import { BookingPlace, Coordinates } from '../../types/api';
 
 type BookingMapProps = {
   places: BookingPlace[];
@@ -37,11 +37,7 @@ const createMarkerIcon = (isActive: boolean): DivIcon =>
     iconAnchor: MARKER_ANCHOR,
   });
 
-const getLatLng = (coords: [number, number]): LatLngTuple => {
-  const [first, second] = coords;
-
-  return first > 40 ? [first, second] : [second, first];
-};
+const getLatLng = (coords: Coordinates): LatLngTuple => coords;
 
 export default function BookingMap({
   places,

@@ -15,23 +15,13 @@ import {
   getReservationsLoadingStatus,
 } from '../../store/booking/selectors';
 import { AppRoute } from '../../types/app-route';
-import { BookingDate, QuestLevel, Reservation } from '../../types/api';
+import { Reservation } from '../../types/api';
+import { QuestLevelTitle, BookingDateTitle } from '../../const';
 
 type ReservationCardProps = {
   reservation: Reservation;
   isDeleting: boolean;
   onReservationDelete: (reservationId: string) => void;
-};
-
-const BookingDateTitle: Record<BookingDate, string> = {
-  today: 'сегодня',
-  tomorrow: 'завтра',
-};
-
-const QuestLevelTitle: Record<QuestLevel, string> = {
-  easy: 'легкий',
-  medium: 'средний',
-  hard: 'сложный',
 };
 
 function ReservationCard({
